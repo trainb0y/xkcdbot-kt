@@ -6,6 +6,7 @@ import dev.kord.common.entity.PresenceStatus
 import dev.kord.common.entity.Snowflake
 import io.github.trainb0y.xkcdbot.extensions.XKCDExtension
 
+const val version  = "1.0"
 
 suspend fun main() {
     val bot = ExtensibleBot(env("TOKEN")) {

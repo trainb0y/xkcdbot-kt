@@ -19,6 +19,7 @@ import dev.kord.core.behavior.edit
 import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.embed
 import dev.kord.rest.builder.message.modify.embed
+import io.github.trainb0y.xkcdbot.version
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import kotlin.random.Random
@@ -173,11 +174,11 @@ class XKCDExtension : Extension() {
 
 		publicSlashCommand {
 			name = "xkcd"
-			description = "XKCD related commands"
+			description = "xkcd related commands"
 
 			publicSubCommand {
 				name = "latest"
-				description = "Gets the latest XKCD comic"
+				description = "Gets the latest xkcd"
 				action {
 					val xkcd = getXKCD("https://xkcd.com")
 					val message = respond{embed{xkcd.applyEmbed(this)}}.message
@@ -187,7 +188,7 @@ class XKCDExtension : Extension() {
 
 			publicSubCommand {
 				name = "random"
-				description = "Get a random XKCD"
+				description = "Get a random xkcd"
 				action {
 					val xkcd = getXKCD(Random.nextInt(1, getXKCD("https://xkcd.com/").num))
 					val message = respond { embed{ xkcd.applyEmbed(this)}}.message
@@ -197,7 +198,7 @@ class XKCDExtension : Extension() {
 
 			publicSubCommand(::RangeCommandArgs) {
 				name = "range"
-				description = "Gets a range of XKCD comics"
+				description = "Gets a range of xkcd comics"
 				action {
 					if (kotlin.math.abs(arguments.last - arguments.first) > 10) {
 						respond {
@@ -240,6 +241,46 @@ class XKCDExtension : Extension() {
 					updateComicNames()
 					respond { content = "Updated" }
 				}
+			}
+
+			ephemeralSubCommand {
+				name = "help"
+				description = "Bot information and help"
+				action { respond {
+					embed {
+						title = "xkcd Bot v$version"
+						field {
+							name = "About"
+							value = """
+								This bot provides commands for the xkcd webcomic (https://xkcd.com/)
+								It was written by @trainb0y#7688 out of boredom.
+							""".trimIndent()
+						}
+						field {
+							name = "Commands"
+							value = """
+								`/xkcd get <num>            `- Get a specific xkcd comic by its number
+								`/xkcd range <first> <last> `- Get a range of xkcd comics from first to last
+								`/xkcd random               `- Get a random xkcd comic
+								`/xkcd lookup <name>	    `- Get a specific comic by its name
+								`/xkcd latest     	       `- Get the latest xkcd
+								
+								Any parameter named "buttons" controls whether to attach the navigation buttons to the message.
+								
+							""".trimIndent()
+						}
+					}
+					components {
+						linkButton {
+							label = "GitHub"
+							url = "https://github.com/trainb0y/xkcdbot"
+						}
+						linkButton {
+							label = "Report an Issue"
+							url = "https://github.com/trainb0y/xkcdbot/issues"
+						}
+					}
+				}}
 			}
 		}
 	}
