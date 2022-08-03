@@ -20,3 +20,5 @@ STATUS=<bot status>
 ```
 
 ### Examples
+![image](https://user-images.githubusercontent.com/66213737/182714407-a87dfe6d-faa4-41fe-9e82-3d5548c93ee2.png)
+![image](https://user-images.githubusercontent.com/66213737/182714457-24c83722-a25a-4907-906e-e59385a735c5.png)
