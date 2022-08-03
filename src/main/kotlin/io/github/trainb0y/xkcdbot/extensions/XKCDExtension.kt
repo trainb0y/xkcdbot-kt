@@ -36,7 +36,7 @@ class XKCDExtension : Extension() {
 
 	data class XKCD(
 		/**
-		 * The number of this XKCD installment
+		 * The number of this xkcd installment
 		 */
 		val num: Int,
 		/**
@@ -66,7 +66,7 @@ class XKCDExtension : Extension() {
 	}
 
 	/**
-	 * Get the XKCD comic at [url]
+	 * Get the xkcd comic at [url]
 	 */
 	private fun getXKCD(url: String): XKCD {
 		logger.debug { "Attempting to get xkcd comic from $url" }
@@ -89,7 +89,7 @@ class XKCDExtension : Extension() {
 	}
 
 	/**
-	 * Get the XKCD comic number [num]
+	 * Get the xkcd comic number [num]
 	 */
 	private fun getXKCD(num: Int) = getXKCD("https://xkcd.com/$num")
 
@@ -222,7 +222,7 @@ class XKCDExtension : Extension() {
 
 			publicSubCommand(::SingleCommandArgs) {
 				name = "get"
-				description = "Get a specific XKCD comic"
+				description = "Get a specific xkcd comic"
 				action {
 					val xkcd = getXKCD(arguments.num)
 					val message = respond { embed { xkcd.applyEmbed(this) } }.message
@@ -270,7 +270,7 @@ class XKCDExtension : Extension() {
 								`/xkcd range <first> <last> `- Get a range of xkcd comics from first to last
 								`/xkcd random               `- Get a random xkcd comic
 								`/xkcd lookup <name>	    `- Get a specific comic by its name
-								`/xkcd latest     	       `- Get the latest xkcd
+								`/xkcd latest     	        `- Get the latest xkcd
 								
 								Any parameter named "buttons" controls whether to attach the navigation buttons to the message.
 								
