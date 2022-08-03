@@ -6,21 +6,21 @@ import dev.kord.common.entity.PresenceStatus
 import dev.kord.common.entity.Snowflake
 import io.github.trainb0y.xkcdbot.extensions.XKCDExtension
 
-const val version  = "1.0"
+const val version = "1.0"
 
 suspend fun main() {
-    val bot = ExtensibleBot(env("TOKEN")) {
-        applicationCommands {
-            enabled = true
-            defaultGuild = Snowflake(env("TEST_SERVER").toLong())
-        }
-        presence {
-            status = PresenceStatus.Online
-            watching(env("STATUS"))
-        }
-        extensions {
-            add(::XKCDExtension)
-        }
-    }
-    bot.start()
+	val bot = ExtensibleBot(env("TOKEN")) {
+		applicationCommands {
+			enabled = true
+			defaultGuild = Snowflake(env("TEST_SERVER").toLong())
+		}
+		presence {
+			status = PresenceStatus.Online
+			watching(env("STATUS"))
+		}
+		extensions {
+			add(::XKCDExtension)
+		}
+	}
+	bot.start()
 }

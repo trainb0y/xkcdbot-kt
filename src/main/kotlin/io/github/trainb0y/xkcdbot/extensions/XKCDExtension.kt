@@ -181,7 +181,7 @@ class XKCDExtension : Extension() {
 				description = "Gets the latest xkcd"
 				action {
 					val xkcd = getXKCD("https://xkcd.com")
-					val message = respond{embed{xkcd.applyEmbed(this)}}.message
+					val message = respond { embed { xkcd.applyEmbed(this) } }.message
 					xkcdInteractiveMessage(xkcd, message)
 				}
 			}
@@ -191,7 +191,7 @@ class XKCDExtension : Extension() {
 				description = "Get a random xkcd"
 				action {
 					val xkcd = getXKCD(Random.nextInt(1, getXKCD("https://xkcd.com/").num))
-					val message = respond { embed{ xkcd.applyEmbed(this)}}.message
+					val message = respond { embed { xkcd.applyEmbed(this) } }.message
 					xkcdInteractiveMessage(xkcd, message)
 				}
 			}
@@ -206,9 +206,9 @@ class XKCDExtension : Extension() {
 						}
 						return@action
 					}
-					for (num in arguments.first..arguments.last){
+					for (num in arguments.first..arguments.last) {
 						val xkcd = getXKCD(num)
-						val message = respond {embed{xkcd.applyEmbed(this)} }.message
+						val message = respond { embed { xkcd.applyEmbed(this) } }.message
 						if (arguments.buttons == true) xkcdInteractiveMessage(xkcd, message)
 					}
 				}
@@ -246,19 +246,20 @@ class XKCDExtension : Extension() {
 			ephemeralSubCommand {
 				name = "help"
 				description = "Bot information and help"
-				action { respond {
-					embed {
-						title = "xkcd Bot v$version"
-						field {
-							name = "About"
-							value = """
+				action {
+					respond {
+						embed {
+							title = "xkcd Bot v$version"
+							field {
+								name = "About"
+								value = """
 								This bot provides commands for the xkcd webcomic (https://xkcd.com/)
 								It was written by @trainb0y#7688 out of boredom.
 							""".trimIndent()
-						}
-						field {
-							name = "Commands"
-							value = """
+							}
+							field {
+								name = "Commands"
+								value = """
 								`/xkcd get <num>            `- Get a specific xkcd comic by its number
 								`/xkcd range <first> <last> `- Get a range of xkcd comics from first to last
 								`/xkcd random               `- Get a random xkcd comic
@@ -268,19 +269,20 @@ class XKCDExtension : Extension() {
 								Any parameter named "buttons" controls whether to attach the navigation buttons to the message.
 								
 							""".trimIndent()
+							}
+						}
+						components {
+							linkButton {
+								label = "GitHub"
+								url = "https://github.com/trainb0y/xkcdbot"
+							}
+							linkButton {
+								label = "Report an Issue"
+								url = "https://github.com/trainb0y/xkcdbot/issues"
+							}
 						}
 					}
-					components {
-						linkButton {
-							label = "GitHub"
-							url = "https://github.com/trainb0y/xkcdbot"
-						}
-						linkButton {
-							label = "Report an Issue"
-							url = "https://github.com/trainb0y/xkcdbot/issues"
-						}
-					}
-				}}
+				}
 			}
 		}
 	}
