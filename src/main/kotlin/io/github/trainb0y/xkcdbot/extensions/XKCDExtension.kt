@@ -222,7 +222,7 @@ class XKCDExtension : Extension() {
 
 			publicSubCommand(::SingleCommandArgs) {
 				name = "get"
-				description = "Get a specific XKCD comic"
+				description = "Get a specific xkcd comic"
 				action {
 					val xkcd = getXKCD(arguments.num)
 					val message = respond { embed { xkcd.applyEmbed(this) } }.message
