@@ -1,0 +1,2 @@
+# XKCD Bot
+todo: readme
