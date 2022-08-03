@@ -13,5 +13,4 @@ kord-extensions = { module = "com.kotlindiscord.kord.extensions:kord-extensions"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 logging = { module = "io.github.microutils:kotlin-logging", version.ref = "logging" }
-kx-ser = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kx-ser" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
