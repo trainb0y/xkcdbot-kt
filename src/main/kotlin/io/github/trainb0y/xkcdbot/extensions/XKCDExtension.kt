@@ -25,15 +25,35 @@ import kotlin.random.Random
 
 class XKCDExtension : Extension() {
 	override val name = "xkcd"
+
+	/**
+	 * A map of <comic name> to <comic number>
+	 * @see updateComicNames
+	 */
 	private val comicNames = mutableMapOf<String, Int>()
 
 	data class XKCD(
+		/**
+		 * The number of this XKCD installment
+		 */
 		val num: Int,
+		/**
+		 * The title of this comic
+		 */
 		val title: String,
+		/**
+		 * The alt (hover) text of this comic
+		 */
 		val alt: String,
+		/**
+		 * The URL of the comic's image
+		 */
 		val img: String
 	) {
-		fun getEmbed(builder: EmbedBuilder) = builder.apply {
+		/**
+		 * Apply this comic to [builder]
+		 */
+		fun applyEmbed(builder: EmbedBuilder) = builder.apply {
 			this.title = this@XKCD.title
 			this.description = this@XKCD.alt
 			this.image = this@XKCD.img
@@ -43,6 +63,9 @@ class XKCDExtension : Extension() {
 		}
 	}
 
+	/**
+	 * Get the XKCD comic at [url]
+	 */
 	private fun getXKCD(url: String): XKCD {
 		val doc =
 			try {
@@ -60,19 +83,35 @@ class XKCDExtension : Extension() {
 			comic?.let { "https:" + comic.attr("src") } ?: "https://imgs.xkcd.com/comics/not_available.png"
 		)
 	}
+
+	/**
+	 * Get the XKCD comic number [num]
+	 */
 	private fun getXKCD(num: Int) = getXKCD("https://xkcd.com/$num")
 
 
+	/**
+	 * Create an interactive message for [comic] using [message]
+	 * The contents of [message] will be overwritten.
+	 */
 	suspend fun xkcdInteractiveMessage(comic: XKCD, message: MessageBehavior) {
+		/**
+		 * The curent comic displayed by this interactive message
+		 */
 		var currentNum = comic.num
+
+		// Every time a button is clicked, the message clears and rewrites itself
 		suspend fun applyNew(message: MessageBehavior) {
 			message.edit {
+				// Clear the previous content of this message
 				this.embeds?.clear()
 				this.content = null
-				this.embed {
-					getXKCD(currentNum).getEmbed(this)
-				}
-				this.components?.clear()
+				this.components?.clear() // Redo the buttons, otherwise the link buttons will be out of date
+
+				// New embed
+				this.embed { getXKCD(currentNum).applyEmbed(this) }
+
+				// New navigation buttons
 				this.applyComponents(components {
 					publicButton {
 						label = "Previous"
@@ -82,7 +121,7 @@ class XKCDExtension : Extension() {
 						}
 					}
 					publicButton {
-						label = "\uD83C\uDFB2"
+						label = "\uD83C\uDFB2" // dice emoji
 						action {
 							currentNum = Random.nextInt(1, getXKCD("https://xkcd.com/").num)
 							applyNew(message)
@@ -110,7 +149,10 @@ class XKCDExtension : Extension() {
 		applyNew(message)
 	}
 
-	private fun updateNames() {
+	/**
+	 * Update [comicNames] by parsing https://xkcd.com/archive/
+	 */
+	private fun updateComicNames() {
 		comicNames.clear()
 		val doc = Jsoup.connect("https://xkcd.com/archive/").get()
 		val links = doc.select("a")
@@ -127,7 +169,7 @@ class XKCDExtension : Extension() {
 
 
 	override suspend fun setup() {
-		updateNames()
+		updateComicNames()
 
 		publicSlashCommand {
 			name = "xkcd"
@@ -138,7 +180,7 @@ class XKCDExtension : Extension() {
 				description = "Gets the latest XKCD comic"
 				action {
 					val xkcd = getXKCD("https://xkcd.com")
-					val message = respond{embed{xkcd.getEmbed()}}.message
+					val message = respond{embed{xkcd.applyEmbed(this)}}.message
 					xkcdInteractiveMessage(xkcd, message)
 				}
 			}
@@ -148,7 +190,7 @@ class XKCDExtension : Extension() {
 				description = "Get a random XKCD"
 				action {
 					val xkcd = getXKCD(Random.nextInt(1, getXKCD("https://xkcd.com/").num))
-					val message = respond { embed{ xkcd.getEmbed(this)}}.message
+					val message = respond { embed{ xkcd.applyEmbed(this)}}.message
 					xkcdInteractiveMessage(xkcd, message)
 				}
 			}
@@ -165,7 +207,7 @@ class XKCDExtension : Extension() {
 					}
 					for (num in arguments.first..arguments.last){
 						val xkcd = getXKCD(num)
-						val message = respond {embed{xkcd.getEmbed(this)} }.message
+						val message = respond {embed{xkcd.applyEmbed(this)} }.message
 						if (arguments.buttons == true) xkcdInteractiveMessage(xkcd, message)
 					}
 				}
@@ -176,7 +218,7 @@ class XKCDExtension : Extension() {
 				description = "Get a specific XKCD comic"
 				action {
 					val xkcd = getXKCD(arguments.num)
-					val message = respond { embed { xkcd.getEmbed(this) } }.message
+					val message = respond { embed { xkcd.applyEmbed(this) } }.message
 					if (arguments.buttons == true) xkcdInteractiveMessage(xkcd, message)
 				}
 			}
@@ -186,7 +228,7 @@ class XKCDExtension : Extension() {
 				description = "Get a comic by its name"
 				action {
 					val xkcd = getXKCD(comicNames[arguments.name.lowercase()] ?: -1)
-					val message = respond { embed { xkcd.getEmbed(this) } }.message
+					val message = respond { embed { xkcd.applyEmbed(this) } }.message
 					if (arguments.buttons == true) xkcdInteractiveMessage(xkcd, message)
 				}
 			}
@@ -195,7 +237,7 @@ class XKCDExtension : Extension() {
 				name = "update"
 				description = "Force update the comic name to id map"
 				action {
-					updateNames()
+					updateComicNames()
 					respond { content = "Updated" }
 				}
 			}

@@ -15,7 +15,6 @@ suspend fun main() {
         }
         presence {
             status = PresenceStatus.Online
-            // Can be changed later
             watching(env("STATUS"))
         }
         extensions {
