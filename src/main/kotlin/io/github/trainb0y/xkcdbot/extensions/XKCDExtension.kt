@@ -19,6 +19,7 @@ import dev.kord.core.behavior.edit
 import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.embed
 import dev.kord.rest.builder.message.modify.embed
+import io.github.trainb0y.xkcdbot.logger
 import io.github.trainb0y.xkcdbot.version
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
@@ -68,10 +69,12 @@ class XKCDExtension : Extension() {
 	 * Get the XKCD comic at [url]
 	 */
 	private fun getXKCD(url: String): XKCD {
+		logger.debug { "Attempting to get xkcd comic from $url" }
 		val doc =
 			try {
 				Jsoup.connect(url).get()
 			} catch (e: HttpStatusException) {
+				logger.warn {"Couldn't get comic from $url! $e"}
 				null
 			}
 
@@ -103,6 +106,7 @@ class XKCDExtension : Extension() {
 
 		// Every time a button is clicked, the message clears and rewrites itself
 		suspend fun applyNew(message: MessageBehavior) {
+			logger.debug { "Applying comic $currentNum to $message" }
 			message.edit {
 				// Clear the previous content of this message
 				this.embeds?.clear()
@@ -154,6 +158,7 @@ class XKCDExtension : Extension() {
 	 * Update [comicNames] by parsing https://xkcd.com/archive/
 	 */
 	private fun updateComicNames() {
+		logger.debug { "Updating comic name map" }
 		comicNames.clear()
 		val doc = Jsoup.connect("https://xkcd.com/archive/").get()
 		val links = doc.select("a")
@@ -166,6 +171,7 @@ class XKCDExtension : Extension() {
 			}
 			comicNames[name] = num
 		}
+		logger.info {"Finished updating comic name map"}
 	}
 
 
