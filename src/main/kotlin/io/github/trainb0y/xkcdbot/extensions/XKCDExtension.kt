@@ -14,6 +14,7 @@ import com.kotlindiscord.kord.extensions.components.publicButton
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
 import com.kotlindiscord.kord.extensions.types.respond
+import dev.kord.common.entity.Permission
 import dev.kord.core.behavior.MessageBehavior
 import dev.kord.core.behavior.edit
 import dev.kord.rest.builder.message.EmbedBuilder
@@ -177,10 +178,10 @@ class XKCDExtension : Extension() {
 
 	override suspend fun setup() {
 		updateComicNames()
-
 		publicSlashCommand {
 			name = "xkcd"
 			description = "xkcd related commands"
+			requirePermission(Permission.EmbedLinks)
 
 			publicSubCommand {
 				name = "latest"

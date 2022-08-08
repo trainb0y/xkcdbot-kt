@@ -7,7 +7,7 @@ import dev.kord.common.entity.Snowflake
 import io.github.trainb0y.xkcdbot.extensions.XKCDExtension
 import mu.KotlinLogging
 
-const val version = "1.0"
+const val version = "1.1"
 val logger = KotlinLogging.logger {}
 suspend fun main() {
 	logger.info { "Starting XKCD Bot v$version" }
