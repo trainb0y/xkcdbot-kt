@@ -14,7 +14,8 @@ suspend fun main() {
 	val bot = ExtensibleBot(env("TOKEN")) {
 		applicationCommands {
 			enabled = true
-			defaultGuild = Snowflake(env("TEST_SERVER").toLong())
+			try { defaultGuild = Snowflake(env("TEST_SERVER").toLong()) }
+			catch (_: RuntimeException) {} // no default guild
 		}
 		presence {
 			status = PresenceStatus.Online
