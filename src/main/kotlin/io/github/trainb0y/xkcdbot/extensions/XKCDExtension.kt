@@ -246,7 +246,7 @@ class XKCDExtension : Extension() {
 				name = "lookup"
 				description = "Get a comic by its name"
 				action {
-					val xkcd = getXKCD(comicNames[comicNames.keys.firstOrNull { it.lowercase().contains(arguments.name.lowercase())}] ?: -1) ?: run {
+					val xkcd = getXKCD(comicNames[arguments.name.lowercase()] ?: -1) ?: run {
 						respondEphemeral {
 							content = "Could not find comic!"
 						}
