@@ -232,7 +232,7 @@ class XKCDExtension : Extension() {
 				description = "Get a specific xkcd comic"
 				action {
 					val xkcd = getXKCD(arguments.num) ?: run {
-						respondEphemeral {
+						respond {
 							content = "Could not find comic #${arguments.num}"
 						}
 						return@action
@@ -247,7 +247,7 @@ class XKCDExtension : Extension() {
 				description = "Get a comic by its name"
 				action {
 					val xkcd = getXKCD(comicNames[arguments.name.lowercase()] ?: -1) ?: run {
-						respondEphemeral {
+						respond {
 							content = "Could not find comic!"
 						}
 						return@action
