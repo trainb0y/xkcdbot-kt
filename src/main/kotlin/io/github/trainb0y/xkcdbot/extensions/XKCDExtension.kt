@@ -241,7 +241,7 @@ class XKCDExtension : Extension() {
 				name = "lookup"
 				description = "Get a comic by its name"
 				action {
-					val xkcd = getXKCD(comicNames[arguments.name.lowercase()] ?: -1)
+					val xkcd = getXKCD(comicNames[comicNames.keys.first { it.lowercase().contains(arguments.name.lowercase())}] ?: -1)
 					val message = respond { embed { xkcd.applyEmbed(this) } }.message
 					if (arguments.buttons == true) xkcdInteractiveMessage(xkcd, message)
 				}
