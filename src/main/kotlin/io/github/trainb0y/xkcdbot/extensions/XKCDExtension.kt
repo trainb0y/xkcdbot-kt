@@ -14,8 +14,8 @@ import com.kotlindiscord.kord.extensions.components.publicButton
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
 import com.kotlindiscord.kord.extensions.types.respond
+import com.kotlindiscord.kord.extensions.types.respondEphemeral
 import com.kotlindiscord.kord.extensions.utils.scheduling.Scheduler
-import com.kotlindiscord.kord.extensions.utils.scheduling.Task
 import dev.kord.common.entity.Permission
 import dev.kord.core.behavior.MessageBehavior
 import dev.kord.core.behavior.edit
@@ -74,14 +74,14 @@ class XKCDExtension : Extension() {
 	/**
 	 * Get the xkcd comic at [url]
 	 */
-	private fun getXKCD(url: String): XKCD {
+	private fun getXKCD(url: String): XKCD? {
 		logger.debug { "Attempting to get xkcd comic from $url" }
 		val doc =
 			try {
 				Jsoup.connect(url).get()
 			} catch (e: HttpStatusException) {
 				logger.warn {"Couldn't get comic from $url! $e"}
-				null
+				return null
 			}
 
 		val comic = doc?.select("#comic img")?.first()
@@ -120,7 +120,7 @@ class XKCDExtension : Extension() {
 				this.components?.clear() // Redo the buttons, otherwise the link buttons will be out of date
 
 				// New embed
-				this.embed { getXKCD(currentNum).applyEmbed(this) }
+				this.embed { getXKCD(currentNum)!!.applyEmbed(this) }
 
 				// New navigation buttons
 				this.applyComponents(components {
@@ -134,7 +134,7 @@ class XKCDExtension : Extension() {
 					publicButton {
 						label = "\uD83C\uDFB2" // dice emoji
 						action {
-							currentNum = Random.nextInt(1, getXKCD("https://xkcd.com/").num)
+							currentNum = Random.nextInt(1, getXKCD("https://xkcd.com/")!!.num)
 							applyNew(message)
 						}
 					}
@@ -193,7 +193,7 @@ class XKCDExtension : Extension() {
 				name = "latest"
 				description = "Gets the latest xkcd"
 				action {
-					val xkcd = getXKCD("https://xkcd.com")
+					val xkcd = getXKCD("https://xkcd.com")!!
 					val message = respond { embed { xkcd.applyEmbed(this) } }.message
 					xkcdInteractiveMessage(xkcd, message)
 				}
@@ -203,7 +203,7 @@ class XKCDExtension : Extension() {
 				name = "random"
 				description = "Get a random xkcd"
 				action {
-					val xkcd = getXKCD(Random.nextInt(1, getXKCD("https://xkcd.com/").num))
+					val xkcd = getXKCD(Random.nextInt(1, getXKCD("https://xkcd.com/")!!.num))!!
 					val message = respond { embed { xkcd.applyEmbed(this) } }.message
 					xkcdInteractiveMessage(xkcd, message)
 				}
@@ -220,7 +220,7 @@ class XKCDExtension : Extension() {
 						return@action
 					}
 					for (num in arguments.first..arguments.last) {
-						val xkcd = getXKCD(num)
+						val xkcd = getXKCD(num) ?: continue
 						val message = respond { embed { xkcd.applyEmbed(this) } }.message
 						if (arguments.buttons == true) xkcdInteractiveMessage(xkcd, message)
 					}
@@ -231,7 +231,12 @@ class XKCDExtension : Extension() {
 				name = "get"
 				description = "Get a specific xkcd comic"
 				action {
-					val xkcd = getXKCD(arguments.num)
+					val xkcd = getXKCD(arguments.num) ?: run {
+						respondEphemeral {
+							content = "Could not find comic #${arguments.num}"
+						}
+						return@action
+					}
 					val message = respond { embed { xkcd.applyEmbed(this) } }.message
 					if (arguments.buttons == true) xkcdInteractiveMessage(xkcd, message)
 				}
@@ -241,7 +246,12 @@ class XKCDExtension : Extension() {
 				name = "lookup"
 				description = "Get a comic by its name"
 				action {
-					val xkcd = getXKCD(comicNames[comicNames.keys.first { it.lowercase().contains(arguments.name.lowercase())}] ?: -1)
+					val xkcd = getXKCD(comicNames[comicNames.keys.firstOrNull { it.lowercase().contains(arguments.name.lowercase())}] ?: -1) ?: run {
+						respondEphemeral {
+							content = "Could not find comic!"
+						}
+						return@action
+					}
 					val message = respond { embed { xkcd.applyEmbed(this) } }.message
 					if (arguments.buttons == true) xkcdInteractiveMessage(xkcd, message)
 				}
