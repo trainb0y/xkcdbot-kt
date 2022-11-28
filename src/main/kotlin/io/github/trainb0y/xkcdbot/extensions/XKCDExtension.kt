@@ -63,11 +63,11 @@ class XKCDExtension : Extension() {
 		 */
 		fun applyEmbed(builder: EmbedBuilder) = builder.apply {
 			this.title = this@XKCD.title
-			this.description = this@XKCD.alt
-			this.image = this@XKCD.img
 			this.footer {
-				text = "xkcd #${this@XKCD.num}"
+				text = this@XKCD.alt
 			}
+			this.image = this@XKCD.img
+			this.description = "xkcd #${this@XKCD.num}"
 		}
 	}
 
