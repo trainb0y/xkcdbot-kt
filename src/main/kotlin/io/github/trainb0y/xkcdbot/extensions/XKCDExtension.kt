@@ -14,6 +14,8 @@ import com.kotlindiscord.kord.extensions.components.publicButton
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
 import com.kotlindiscord.kord.extensions.types.respond
+import com.kotlindiscord.kord.extensions.utils.scheduling.Scheduler
+import com.kotlindiscord.kord.extensions.utils.scheduling.Task
 import dev.kord.common.entity.Permission
 import dev.kord.core.behavior.MessageBehavior
 import dev.kord.core.behavior.edit
@@ -25,6 +27,7 @@ import io.github.trainb0y.xkcdbot.version
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.hours
 
 class XKCDExtension : Extension() {
 	override val name = "xkcd"
@@ -34,6 +37,8 @@ class XKCDExtension : Extension() {
 	 * @see updateComicNames
 	 */
 	private val comicNames = mutableMapOf<String, Int>()
+
+	private val scheduler = Scheduler()
 
 	data class XKCD(
 		/**
@@ -178,6 +183,7 @@ class XKCDExtension : Extension() {
 
 	override suspend fun setup() {
 		updateComicNames()
+		scheduler.schedule(12.hours, repeat = true, callback = ::updateComicNames)
 		publicSlashCommand {
 			name = "xkcd"
 			description = "xkcd related commands"
@@ -238,15 +244,6 @@ class XKCDExtension : Extension() {
 					val xkcd = getXKCD(comicNames[arguments.name.lowercase()] ?: -1)
 					val message = respond { embed { xkcd.applyEmbed(this) } }.message
 					if (arguments.buttons == true) xkcdInteractiveMessage(xkcd, message)
-				}
-			}
-
-			ephemeralSubCommand {
-				name = "update"
-				description = "Force update the comic name to id map"
-				action {
-					updateComicNames()
-					respond { content = "Updated" }
 				}
 			}
 
