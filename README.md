@@ -1,4 +1,8 @@
 # xkcd bot
+> **Warning**  
+> This bot is currently being rewritten in Rust over [here](https://github.com/trainb0y/xkcdbot-rs) and will likely no longer be maintained
+
+
 ### About
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![GitHub Actions](https://github.com/trainb0y/xkcdbot/actions/workflows/gradle.yml/badge.svg)
